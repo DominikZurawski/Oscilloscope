@@ -855,10 +855,10 @@ class MainWindow(QMainWindow):
 				except:
 					pass
 				
-				#do zrobienia FFT	TUTAJ
+				#To Do FFT HERE
 				try:
 					if self.plot_frame.FFT.isChecked():
-						#print("elo")
+						print("FFT to Do")
 						
 
 						if i == 0: # or 1:						

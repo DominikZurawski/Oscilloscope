@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import(
 	QHBoxLayout,																# create a new widget, which contains the MyGraph window
 	QVBoxLayout, QGridLayout,QFormLayout ,
 	QLabel, QPushButton, QGraphicsLineItem,
-	QTabWidget, QLineEdit, QDateEdit,QPushButton, QCheckBox, QSlider, QDial, QSpinBox,
+	QTabWidget, QLineEdit, QDateEdit,QPushButton, QCheckBox, QSlider, QDial, QDoubleSpinBox,
 	QProxyStyle
 )
 from PyQt5.QtCore import Qt
@@ -48,6 +48,7 @@ class MyPlot(QWidget):
 	sliders = []
 	dial = []
 	spin_box = []
+	spin_box2 = []
 	Btns = []
 	label_cursor = []
 
@@ -123,12 +124,12 @@ class MyPlot(QWidget):
 	def layout_slider_select(self):
 		self.layout_slider_select = QGridLayout()
 		self.settings.layout.addLayout(self.layout_slider_select)
-		self.slider_label = QLabel("Position:")
-		self.layout_slider_select.addWidget(self.slider_label,0,1)
+		self.slider_label = QLabel("Vertical Position:")
+		self.layout_slider_select.addWidget(self.slider_label,0,0)
 		self.add_slider()
 
 	def add_slider(self):
-		position = [(1,1), (1,2)]
+		'''position = [(1,1), (1,2)]
 		for i in range(0,2):	
 			slider = QSlider(Qt.Vertical) 
 			self.sliders.append(slider)
@@ -138,9 +139,50 @@ class MyPlot(QWidget):
 			slider.setPageStep(10)  # Set the page step
 			slider.setMaximumHeight(100)
 			slider.valueChanged.connect(self.get_slider_value)
-			self.layout_slider_select.addWidget(slider, *position[i])
+			self.layout_slider_select.addWidget(slider, *position[i])'''
+		position_1 = [(1,0), (1,1)]
+		position_2 = [(2,0), (2,1)]
+		for i in range(0,2):	
+			slider = QDial()
+			edit_box = QLineEdit()
+			self.sliders.append(slider)
+			slider.setRange(-50, 50)  # Set the range (from 0 to 100)
+			slider.setValue(0)  # Set the initial value
+			slider.setNotchesVisible(True)
+			self.layout_slider_select.addWidget(slider, *position_1[i])
+			slider.valueChanged.connect(self.get_slider_value)
+
+			spin_box = QDoubleSpinBox()
+			self.spin_box2.append(spin_box)
+			spin_box.setRange(-50.0, 50.0)
+			spin_box.setSingleStep(0.1)
+			spin_box.setValue(0.0)
+			self.layout_slider_select.addWidget(spin_box, *position_2[i])
+			spin_box.valueChanged.connect(self.update_spin2_box)
+
+	def update_spin2_box(self, value):
+		sender = self.sender()
+		self.spin2_index = self.spin_box2.index(sender)
+
+		spin_box2 = self.spin_box[self.spin2_index]
+		self.sliders[self.spin2_index].setValue(int(round(value)))
+
+		if self.spin2_index == 0:
+			self.slider1_value = value
+		elif self.spin2_index == 1:
+			self.slider2_value = value
 
 	def get_slider_value(self, value):
+		sender = self.sender()
+		self.slider_index = self.sliders.index(sender)
+		slider = self.sliders[self.slider_index]
+		#print(f"Dial {index} value: {value}")
+		fValue = value/1.0
+		self.spin_box2[self.slider_index].setValue(fValue)
+
+
+
+	'''def get_slider_value(self, value):
 		sender = self.sender()
 		self.slider_index = self.sliders.index(sender)
 		slider = self.sliders[self.slider_index]
@@ -149,14 +191,14 @@ class MyPlot(QWidget):
 		if self.slider_index == 0:
 			self.slider1_value = value
 		elif self.slider_index == 1:
-			self.slider2_value = value
+			self.slider2_value = value'''
 
 	def layout_dial_select(self):
 		self.layout_dial_select = QGridLayout()
 		self.settings.layout.addLayout(self.layout_dial_select)
-		dial_1_label = QLabel("X Range:")
+		dial_1_label = QLabel("CH1 gain:")
 		self.layout_dial_select.addWidget(dial_1_label,0,0)
-		dial_2_label = QLabel("Y Range:")
+		dial_2_label = QLabel("CH2 gain:")
 		self.layout_dial_select.addWidget(dial_2_label,0,2)
 		self.add_dial()
 
@@ -173,9 +215,11 @@ class MyPlot(QWidget):
 			self.layout_dial_select.addWidget(dial, *position_1[i])
 			dial.valueChanged.connect(self.get_dial_value)
 
-			spin_box = QSpinBox()
+			spin_box = QDoubleSpinBox()
 			self.spin_box.append(spin_box)
-			spin_box.setRange(1, 100)
+			spin_box.setRange(0.1, 100.0)
+			spin_box.setSingleStep(0.1)
+			spin_box.setValue(1.0)
 			self.layout_dial_select.addWidget(spin_box, *position_2[i])
 			spin_box.valueChanged.connect(self.update_spin_box)
 
@@ -183,21 +227,22 @@ class MyPlot(QWidget):
 		sender = self.sender()
 		self.spin_index = self.spin_box.index(sender)
 		spin_box = self.spin_box[self.spin_index]
-		self.dial[self.spin_index].setValue(value)
+		self.dial[self.spin_index].setValue(int(round(value)))
 
+		if self.spin_index == 0:
+			self.dial1_value = value
+		elif self.spin_index == 1:
+			self.dial2_value = value
 
 	def get_dial_value(self, value):
 		sender = self.sender()
 		self.dial_index = self.dial.index(sender)
 		dial = self.dial[self.dial_index]
 		#print(f"Dial {index} value: {value}")
+		fValue = value/1.0
+		self.spin_box[self.dial_index].setValue(fValue)
 
-		self.spin_box[self.dial_index].setValue(value)
 
-		if self.dial_index == 0:
-			self.dial1_value = value
-		elif self.dial_index == 1:
-			self.dial2_value = value
 
 	def layout_channel_select(self):
 		self.layout_channel_select = QGridLayout()
