@@ -109,7 +109,7 @@ ENDLINE_OPTIONS = [
 ]
 
 RECORD_PERIOD = 1000 													# time in ms between two savings of the recorded data onto file
-POINTS_PER_PLOT = 2000													# width of x axis, corresponding to the number of dots to be plotted at each iteration
+POINTS_PER_PLOT = 3000													# width of x axis, corresponding to the number of dots to be plotted at each iteration
 
 # THREAD STUFF #  (not needed ATM)
 
@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
 		self.update_ports_timer = QTimer()
 		self.update_ports_timer.timeout.connect(
 			self.update_serial_ports)									# updating serial port list in a regular time basis. 
-		self.update_ports_timer.start(3000)								# every  3 seconds seems reasonable.
+		self.update_ports_timer.start(200)								# every  3 seconds seems reasonable.
 		self.update_ports_timer.stop()
 			
 
@@ -831,7 +831,7 @@ class MainWindow(QMainWindow):
 					valsf[i] *= K 	#ADC value convert to voltage
 				except:
 					pass
-
+				
 				try:					
 					if i == 0:	
 						valsf[i] = valsf[i] + self.plot_frame.slider1_value #change position of graphs of functions (slider)
@@ -856,6 +856,7 @@ class MainWindow(QMainWindow):
 					pass
 				
 				#To Do FFT HERE
+				'''
 				try:
 					if self.plot_frame.FFT.isChecked():
 						print("FFT to Do")
@@ -886,16 +887,18 @@ class MainWindow(QMainWindow):
 							plt.ylabel('|Y(freq)|')
 							plt.title('FFT sygnału z Arduino')
 							plt.grid(True)
-							plt.show()
-							'''elif i == 1:
-								x1_data = collect_data()
-								Y1_data, freq1_data = compute_fft(x1_data)
-								#valsf[i] = np.abs(Y_data[:n // 2])'''
+							plt.show() 
+							#elif i == 1:
+							#	x1_data = collect_data()
+							#	Y1_data, freq1_data = compute_fft(x1_data)
+							#	#valsf[i] = np.abs(Y_data[:n // 2])
+
 
 							#self.FFT(valsf[i])
 							#valsf[i] = np.fft.fft(valsf[i])
 				except:
 					pass
+				'''
 
 			self.plot_frame.update()
 			#print("dataset_changed = "+ str(self.plot_frame.graph.dataset_changed))
@@ -914,7 +917,8 @@ class MainWindow(QMainWindow):
 		return Y, freq
 
 	def add_values_to_dataset(self,values):
-		self.dataset.append(values)  # appends all channels together
+		for j in range(10):
+			self.dataset.append(values)  # appends all channels together
 		#print(self.dataset[0])
 		# enabling corresponding toggles #
 		for i in range(my_graph.MAX_PLOTS):  # this may not be the greatest option. it's fine.

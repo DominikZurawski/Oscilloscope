@@ -213,6 +213,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) //wywoływana gdy konwers
 
 	        //snprintf(data, DATA_SIZE, "CH1 %d,CH2 %d\r\n", fft_output_1, fft_output_2);
 			//TUTAJ UART
+			//snprintf(data, DATA_SIZE, "CH1 %d\r\n", value[0]);
+			//snprintf(data, DATA_SIZE, "%d, %d, %d, %d\r\n", value[0], value[1], value[0], value[1]);
 	        snprintf(data, DATA_SIZE, "CH1 %d,CH2 %d\r\n", value[0], value[1]);
 	        // Wyślij dane przez UART
 	        HAL_UART_Transmit_DMA(&huart2, (uint8_t*)data, sizeof(data));

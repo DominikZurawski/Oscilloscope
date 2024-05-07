@@ -73,6 +73,8 @@ class MyPlot(QWidget):
 		self.layout.setStretch(1, 1)
 		self.setLayout(self.layout)
 
+		
+
 		self.plot_timer2 = QTimer()								
 		self.plot_timer2.timeout.connect(self.update_label_cursor)
 		self.plot_timer2.start(80)
@@ -457,6 +459,7 @@ class MyPlot(QWidget):
 
 	def set_max_points(self, max_points):
 		self.graph.max_points = max_points
+		print(max_points)
 		self.graph.setLimits(xMin=0, xMax=self.graph.max_points)
 		self.graph.setXRange(0,self.graph.max_points)
 
@@ -489,6 +492,11 @@ class MyPlot(QWidget):
 	def update(self):													# notifies a change in the dataset
 		self.graph.dataset_changed = True								# flag
 		#self.graph.dataset = self.dataset
+		##self.graph.time = self.graph.time[1:]
+		#self.time = self.time[-self.max_points:]
+		#self.max_points = self.max_points[1:]
+		#self.max_points = self.max_points + 5)
+		##self.graph.time.append(self.graph.time[-1] + 1)
 		
 	def setBackground(self, color):
 		self.graph.setBackground(color)
@@ -564,14 +572,16 @@ class MyGraph(pg.PlotWidget):											# this is supposed to be the python conv
 		pg.setConfigOptions(antialias=False)																			# antialiasing for nicer view.
 		#self.setBackground([70,70,70])	
 		self.showGrid(x=True,y=True)																				# changing default background color.
-		#self.showGrid(x = True, y = True, alpha = 0.5)
+		self.showGrid(x = True, y = True, alpha = 0.5)
 		self.setRange(xRange = [-self.max_points,self.max_points], yRange = [-8,10], padding=0) 	
 		self.setLabels(left='Voltage [V]',bottom="t  [ms]")											# set default axes range
 		self.setLimits(xMin=0, xMax=self.max_points, yMin=DEFAULT_Y_MIN, yMax=DEFAULT_Y_MAX)							# THIS MAY ENTER IN CONFIG WITH PLOTTING !!!
-		#self.enableAutoRange(axis='x', enable=True)																	# enabling autorange for x axis
+		#self.enableAutoRange(axis='x', enable=True)
+																			# enabling autorange for x axis
 		legend = self.addLegend()
 		self.setTitle(title)																				# if title is wanted
 		self.cursor = [None, None, None, None]
+		#self.time = list(range(max_points))
 
 	def create_plots(self):
 		for i in range (MAX_PLOTS):
@@ -615,41 +625,10 @@ class MyGraph(pg.PlotWidget):											# this is supposed to be the python conv
 					labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50), 'movable': True})
 				self.cursor[i] = pg.InfiniteLine(movable=True, angle=90, label='Y'+str(index+1)+'={value:0.2f}ms', 
 					labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50), 'movable': True})
-				self.cursor[index].setPos([index+10, index])
-				self.cursor[i].setPos([i+10, i])
+				self.cursor[index].setPos([index+100, index])
+				self.cursor[i].setPos([i+300, i])
 				self.addItem(self.cursor[index])
 				self.addItem(self.cursor[i])
-
-
-		'''
-		match index:
-			case 0 | 1:				
-				self.cursor[index] = pg.InfiniteLine(movable=True, angle=0, pen=(0, 0, 200),
-					bounds = [-50, 50], hoverPen=(0,200,0), label='X'+str(i)+'={value:0.2f}V', 
-					labelOpts={'color': (0,200,200), 'movable': True, 'fill': (0, 0, 200, 100)})
-				self.cursor[index].setPos([index, index])
-				self.addItem(self.cursor[index])
-
-			case 2 | 3:
-				ind = index - 1
-				self.cursor[index] = pg.InfiniteLine(movable=True, angle=90, label='Y'+str(ind)+'={value:0.2f}ms', 
-					labelOpts={'position':0.1, 'color': (200,200,100), 'fill': (200,200,200,50), 'movable': True})
-				self.cursor[index].setPos([index*100, index])
-				self.addItem(self.cursor[index])'''
-
-		'''if self.cursor[0] and self.cursor[1]:
-		    x1_pos, y1_pos = self.cursor[0].getPos()
-		    x2_pos, y2_pos = self.cursor[1].getPos()
-		    self.cursor[4] = pg.LineSegmentROI([(100, y1_pos), (100, y2_pos) ], movable=False)
-		    self.addItem(self.cursor[4])'''
-
-		'''if self.cursor[2] and self.cursor[3]:
-		    x1_pos, y1_pos = self.cursor[2].getPos()
-		    x2_pos, y2_pos = self.cursor[3].getPos()
-		    self.cursor[5] = pg.LineSegmentROI([(x1_pos, 2), (x2_pos, 2) ], pen=(0, 0, 200),  movable=False)
-		    self.cursor[5].setLabel("Mój odcinek")
-		    self.addItem(self.cursor[5])'''
-
 
 
 	def on_plot_timer(self):
@@ -670,28 +649,11 @@ class MyGraph(pg.PlotWidget):											# this is supposed to be the python conv
 			#print("length of subset")
 			#print(len(self.plot_subset))
 			self.dataset_changed = False
-			
-			try:
-				self.np_dataset = np.matrix(self.dataset[:][-self.max_points:])		# we only use as subset the last max_points
-				self.np_dataset_t = self.np_dataset.transpose()
-				self.plot_subset = self.np_dataset_t.tolist()
+			#print(self.time[-1])
 
-
-			except:
-				pass					 
-			
-			
-			# ~ print("len(self.plot_subset[0])")
-			# ~ print(len(self.plot_subset[0]))
-
-			
-			# ~ print("self.dataset")
-			# ~ print(self.dataset)
-			# ~ print("self.np_dataset")
-			# ~ print(self.np_dataset)			
-			# ~ print("self.plot_subset")
-			# ~ for var in self.plot_subset:
-				# ~ print(var)	
+			self.np_dataset = np.matrix(self.dataset[:][-self.max_points:])		# we only use as subset the last max_points
+			self.np_dataset_t = self.np_dataset.transpose()
+			self.plot_subset = self.np_dataset_t.tolist()
 
 						
 			for i in range(len(self.plot_subset)):
@@ -706,71 +668,3 @@ class MyGraph(pg.PlotWidget):											# this is supposed to be the python conv
 			
 			pg.QtGui.QGuiApplication.processEvents()						# for whatever reason, works faster when using processEvent.
 		
-
-## THIS PART WON'T BE EXECUTED WHEN IMPORTED AS A SUBMODULE, BUT ONLY WHEN TESTED INDEPENDENTLY ##
-
-if __name__ == "__main__":
-
-	class MainWindow(QMainWindow):
-		
-		# class variables #
-		data_tick_ms = 20
-
-		#creating a fixed size dataset #
-		dataset = []
-	
-		# constructor # 
-		def __init__(self):
-			
-			super().__init__()
-			
-			# add graph and show #
-			#self.graph = MyGraph(dataset = self.dataset)
-			
-			self.plot = MyPlot(dataset = self.dataset)					# extend the constructor, to force giving a reference to a dataset ???
-			
-			self.plot.start_plotting()
-			
-			self.data_timer = QTimer()
-			self.data_timer.timeout.connect(self.on_data_timer)
-			self.data_timer.start(self.data_tick_ms)
-
-			self.plot.check_toggles("all")
-			self.plot.enable_toggles("all")
-								
-
-
-			self.setCentralWidget(self.plot)
-			# last step is showing the window #
-			self.show()
-			
-			#self.plot.graph.plot_timer.start()
-			
-		
-		def on_data_timer(self):										# simulate data coming from external source at regular rate.
-			t0 = time.time()
-			logging.debug("length of dataset: " + str(len(self.plot.dataset)))
-			
-			
-			line = []
-			for i in range(0,MAX_PLOTS):
-					line.append(random.randrange(0,100))	
-			self.dataset.append(line)
-					
-			print("self.dataset")
-			for data in self.dataset:
-				print(data)
-			
-			self.plot.dataset = self.dataset							# this SHOULD HAPPEN INTERNAL TO THE CLASS !!!
-					
-			self.plot.update()
-			t = time.time()
-			dt = t - t0
-			logging.debug("execution time add_stuff_dataset " + str(dt))
-			
-
-	app = QApplication([])
-	app.setStyle("Fusion")												# required to use it here
-	mw = MainWindow()
-	app.exec_()
-
