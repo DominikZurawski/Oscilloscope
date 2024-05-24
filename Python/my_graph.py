@@ -310,7 +310,7 @@ class MyPlot(QWidget):
 							x1, y1 = self.graph.cursor[index].getPos()
 							value =  x2-x1 
 							f = 1/value
-							val = f"Δ {value:.3f}t   Δ{f:.3f}kHz"
+							val = f"Δ {value:.3f}ms   Δ{f:.4f}kHz"
 							self.label_cursor[index].setText(val)
 						except:
 							pass
@@ -572,7 +572,7 @@ class MyGraph(pg.PlotWidget):											# this is supposed to be the python conv
 		pg.setConfigOptions(antialias=False)																			# antialiasing for nicer view.
 		#self.setBackground([70,70,70])	
 		self.showGrid(x=True,y=True)																				# changing default background color.
-		self.showGrid(x = True, y = True, alpha = 0.5)
+		#self.showGrid(x = True, y = True, alpha = 0.5)
 		self.setRange(xRange = [-self.max_points,self.max_points], yRange = [-8,10], padding=0) 	
 		self.setLabels(left='Voltage [V]',bottom="t  [ms]")											# set default axes range
 		self.setLimits(xMin=0, xMax=self.max_points, yMin=DEFAULT_Y_MIN, yMax=DEFAULT_Y_MAX)							# THIS MAY ENTER IN CONFIG WITH PLOTTING !!!

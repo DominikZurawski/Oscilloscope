@@ -612,18 +612,35 @@ class MainWindow(QMainWindow):
 		#self.log_file.close()
 		self.button_stop.setEnabled(False)
 		self.button_record.setEnabled(True)
+	
+	def on_button_autoscale(self, i = 1):
 		
-	def on_button_autoscale(self):
-		# if self.button_autoscale.isChecked():							# if checked, we uncheck and disable autoscale.
+		#if (i == 0):
+		#	self.button_autoscale.setChecked(False)
+		#elif ( i ==1): 
+		#	self.button_autoscale.setChecked(True)
+
+		#if (in == 1):
+		#if self.button_autoscale.isChecked():							# if checked, we uncheck and disable autoscale.
 			print("Autorange enabled")
 			self.plot_frame.graph.enableAutoRange(axis='y')
 			self.plot_frame.graph.setAutoVisible(y=True)				# don't know what's this
 			#self.button_autoscale.setChecked(True)
+			#self.plot_frame.max_value[0] = 0
+			#self.plot_frame.max_value[1] = 0
+			#self.plot_frame.min_value[0] = 0
+			#self.plot_frame.min_value[1] = 0
+			val = 'NaN'
+			for index in range(0,8):
+				self.plot_frame.label_cursor[index].setText(val)
 
-		# else:
-		# 	print("Autorange disabled")
-		# 	self.button_autoscale.setEnabled(True)
-		# 	self.button_autoscale.setChecked(False)
+			i = 0
+
+		#elif(i == 0):
+		#	print("Autorange disabled")
+		#	self.button_autoscale.setEnabled(True)
+			#self.button_autoscale.setChecked(False)
+		#	i = 1
 
 					
 	def on_port_select(self,port_name):									# callback when COM port is selected at the menu.
@@ -917,7 +934,7 @@ class MainWindow(QMainWindow):
 		return Y, freq
 
 	def add_values_to_dataset(self,values):
-		for j in range(10):
+		for j in range(5):
 			self.dataset.append(values)  # appends all channels together
 		#print(self.dataset[0])
 		# enabling corresponding toggles #

@@ -2,6 +2,8 @@
 
 /logs
 __pycache__/
+venv
+.vscode
 
 
 #For STM32 Code:
